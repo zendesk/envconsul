@@ -4,8 +4,9 @@
   version = "0.9.0"
 
 [[constraint]]
-  branch = "master"
+  branch = "ktsanaktsidis/envconsul_release_patch/fix_kill_splay_when_process_dead"
   name = "github.com/hashicorp/consul-template"
+  source = "https://github.com/zendesk/consul-template"
 
 [[constraint]]
   branch = "master"
