@@ -14,6 +14,9 @@ portability for applications across systems.
 
 **The documentation in this README corresponds to the master branch of envconsul. It may contain unreleased features or different APIs than the most recently released version. Please see the Git tag that corresponds to your version of envconsul for the proper documentation.**
 
+# Building for Zendesk
+There's an [internal Confluence page](https://zendesk.atlassian.net/wiki/spaces/OUT/pages/489982639/Building+our+Envconsul+fork) on how to build & deploy this for the Connect environment while we're still using a fork. Once our changes get merged upstream, this can go away :)
+
 ## Installation
 
 ### Pre-Compiled
