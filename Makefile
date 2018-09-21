@@ -58,7 +58,7 @@ define make-xc-target
 		@printf "%s%20s %s\n" "-->" "${1}/${2}:" "${PROJECT} (excluded)"
   else
 		@printf "%s%20s %s\n" "-->" "${1}/${2}:" "${PROJECT}"
-		@docker run \
+		docker run \
 			--interactive \
 			--rm \
 			--dns="8.8.8.8" \

@@ -10,12 +10,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/hashicorp/consul/api"
 	"github.com/hashicorp/consul/testutil"
 	"github.com/hashicorp/vault/builtin/logical/pki"
 	"github.com/hashicorp/vault/builtin/logical/transit"
 	"github.com/hashicorp/vault/http"
 	"github.com/hashicorp/vault/logical"
-	"github.com/hashicorp/vault/physical"
+	"github.com/hashicorp/vault/physical/inmem"
 	"github.com/hashicorp/vault/vault"
 
 	logxi "github.com/mgutz/logxi/v1"
@@ -31,7 +32,7 @@ func TestMain(m *testing.M) {
 		c.Stderr = ioutil.Discard
 	})
 	if err != nil {
-		log.Fatal("failed to start consul server")
+		log.Fatal(fmt.Errorf("failed to start consul server: %v", err))
 	}
 	testConsul = consul
 
@@ -43,6 +44,19 @@ func TestMain(m *testing.M) {
 		log.Fatal(err)
 	}
 	testClients = clients
+
+	serviceMetaService := &api.AgentServiceRegistration{
+		ID:   "service-meta",
+		Name: "service-meta",
+		Tags: []string{"tag1"},
+		Meta: map[string]string{
+			"meta1": "value1",
+		},
+	}
+
+	if err := testClients.consul.client.Agent().ServiceRegister(serviceMetaService); err != nil {
+		panic(err)
+	}
 
 	exitCh := make(chan int, 1)
 	func() {
@@ -122,13 +136,18 @@ func (s *vaultServer) CreateSecret(path string, data map[string]interface{}) err
 // testVaultServer is a helper for creating a Vault server and returning the
 // appropriate client to connect to it.
 func testVaultServer(t *testing.T) (*ClientSet, *vaultServer) {
+	inm, err := inmem.NewInmem(nil, logxi.NullLog)
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	core, err := vault.NewCore(&vault.CoreConfig{
 		DisableMlock:    true,
 		DisableCache:    true,
 		DefaultLeaseTTL: 2 * time.Second,
 		MaxLeaseTTL:     3 * time.Second,
 		Logger:          logxi.NullLog,
-		Physical:        physical.NewInmem(logxi.NullLog),
+		Physical:        inm,
 		LogicalBackends: map[string]logical.Factory{
 			"pki":     pki.Factory,
 			"transit": transit.Factory,
