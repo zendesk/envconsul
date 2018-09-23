@@ -35,7 +35,7 @@
 
 [[projects]]
   branch = "ktsanaktsidis/no_splay_on_kill"
-  digest = "1:e27a2f6dcc2f820f38641e2f48fb4cb3bf21d092bd3013754025d0e94a61912f"
+  digest = "1:d2d9e42aca308ebcf4a39ec671052207996f4049a57cd94838039e22c7a08c06"
   name = "github.com/hashicorp/consul-template"
   packages = [
     "child",
@@ -49,7 +49,7 @@
     "watch",
   ]
   pruneopts = ""
-  revision = "5de99b5f5bc67d1e41faa0cbafaec7067a1b8156"
+  revision = "c7214fab51472ad7672c73f8b09d3bc54015ea8b"
   source = "https://github.com/zendesk/consul-template"
 
 [[projects]]
