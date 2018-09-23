@@ -183,6 +183,15 @@ func (r *Runner) Start() {
 
 // Stop halts the execution of this runner and its subprocesses.
 func (r *Runner) Stop() {
+	r.internalStop(false)
+}
+
+// StopImmediately does Stop except does not wait for splay from the child process
+func (r *Runner) StopImmediately() {
+	r.internalStop(true)
+}
+
+func (r *Runner) internalStop(immediately bool) {
 	r.stopLock.Lock()
 	defer r.stopLock.Unlock()
 
@@ -192,7 +201,7 @@ func (r *Runner) Stop() {
 
 	log.Printf("[INFO] (runner) stopping")
 	r.stopWatcher()
-	r.stopChild()
+	r.stopChild(immediately)
 
 	if err := r.deletePid(); err != nil {
 		log.Printf("[WARN] (runner) could not remove pid at %q: %s",
@@ -274,7 +283,7 @@ func (r *Runner) Run() (<-chan int, error) {
 
 	if r.child != nil {
 		log.Printf("[INFO] (runner) stopping existing child process")
-		r.stopChild()
+		r.stopChild(false)
 	}
 
 	// Create a new environment
@@ -543,13 +552,18 @@ func (r *Runner) stopWatcher() {
 	}
 }
 
-func (r *Runner) stopChild() {
+func (r *Runner) stopChild(immediately bool) {
 	r.childLock.RLock()
 	defer r.childLock.RUnlock()
 
 	if r.child != nil {
-		log.Printf("[DEBUG] (runner) stopping child process")
-		r.child.Stop()
+		if immediately {
+			log.Printf("[DEBUG] (runner) stopping child process immediately")
+			r.child.StopImmediately()
+		} else {
+			log.Printf("[DEBUG] (runner) stopping child process")
+			r.child.Stop()
+		}
 	}
 }
 

@@ -171,7 +171,7 @@ func (cli *CLI) Run(args []string) int {
 				go runner.Start()
 			case *cfg.KillSignal:
 				fmt.Fprintf(cli.errStream, "Cleaning up...\n")
-				runner.Stop()
+				runner.StopImmediately()
 				return ExitCodeInterrupt
 			case signals.SignalLookup["SIGCHLD"]:
 				// The SIGCHLD signal is sent to the parent of a child process when it
